@@ -1,6 +1,6 @@
 # Mood Tracker App
 
-This Flutter app allows users to track their moods by logging them along with optional notes. It also provides a feature to see the number of mood counts and clear function to clear all logged moods.
+This Flutter app allows users to track their moods by logging them along with optional notes. It also provides a feature to see the number of mood counts and clear function to clear all logged moods.Date and Time of Mood logs are displayed along with the moods and notes.
 
 ## How to Run the Project
 
