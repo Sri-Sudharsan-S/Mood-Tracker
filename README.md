@@ -13,7 +13,7 @@ This Flutter app allows users to track their moods by logging them along with op
 - Open a new flutter project in andriod studio.
 - By default main.dart file will be opened with a default program(clear this program).
 - Add the following dependency in pubspec.yaml(found in windows directory)
-dependencies:
+- dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.0.9
