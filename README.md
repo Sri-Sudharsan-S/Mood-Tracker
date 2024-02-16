@@ -10,7 +10,7 @@ This Flutter app allows users to track their moods by logging them along with op
 - An Android Device must be Installed to run the emulator.
 
 ### Running the Project
-- Open a new flutter project in andriod studio.
+- Open a new flutter project in Android studio.
 - By default main.dart file will be opened with a default program(clear this program).
 - Add the following dependency in pubspec.yaml(found in windows directory).
 - dependencies:
