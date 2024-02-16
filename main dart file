@@ -1,0 +1,165 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  runApp(MoodTrackerApp());
+}
+
+class MoodTrackerApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Mood Tracker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MoodTrackerHomePage(),
+    );
+  }
+}
+
+class MoodTrackerHomePage extends StatefulWidget {
+  @override
+  _MoodTrackerHomePageState createState() => _MoodTrackerHomePageState();
+}
+
+class _MoodTrackerHomePageState extends State<MoodTrackerHomePage> {
+  int _moodCount = 0;
+  List<String> _moodHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMoodData();
+  }
+
+  // Load mood count and history from SharedPreferences
+  void _loadMoodData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _moodCount = prefs.getInt('moodCount') ?? 0;
+      _moodHistory = prefs.getStringList('moodHistory') ?? [];
+    });
+  }
+
+  // Save mood count and history to SharedPreferences
+  void _saveMoodData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('moodCount', _moodCount);
+    prefs.setStringList('moodHistory', _moodHistory);
+  }
+
+  // Log mood with selected mood and optional note
+  void _logMood(String mood, String note) {
+    setState(() {
+      _moodCount++;
+      _moodHistory.add('$mood - ${DateTime.now()} - $note');
+      _saveMoodData();
+    });
+    Navigator.of(context).pop(); // Close the mood logging dialog
+  }
+
+  // Show mood logging screen
+  Future<void> _showMoodLoggingScreen(BuildContext context) async {
+    String note = ''; // Optional note
+    TextEditingController noteController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log Your Mood'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Select Your Mood:'),
+                SizedBox(height: 10.0),
+                ListTile(
+                  title: Text('Happy'),
+                  onTap: () {
+                    _logMood('Happy', noteController.text);
+                  },
+                ),
+                ListTile(
+                  title: Text('Neutral'),
+                  onTap: () {
+                    _logMood('Neutral', noteController.text);
+                  },
+                ),
+                ListTile(
+                  title: Text('Sad'),
+                  onTap: () {
+                    _logMood('Sad', noteController.text);
+                  },
+                ),
+                SizedBox(height: 20.0),
+                TextField(
+                  controller: noteController,
+                  decoration: InputDecoration(
+                    labelText: 'Optional Note',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Clear all logged moods and reset mood count
+  void _clearMoods() {
+    setState(() {
+      _moodCount = 0;
+      _moodHistory.clear();
+      _saveMoodData();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mood Tracker'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Mood Count: $_moodCount',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                _showMoodLoggingScreen(context);
+              },
+              child: Text('Log Mood'),
+            ),
+            SizedBox(height: 20.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _moodHistory.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(_moodHistory[index]),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                _clearMoods();
+              },
+              child: Text('Clear Moods'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
